@@ -1,0 +1,13 @@
+version: '5'
+services:
+ bot:
+   build: .
+   image: polinchik/bot:latest
+   volumes:
+     - ./logs:/var/chek_logs
+   
+   
+
+  
+  
+   
