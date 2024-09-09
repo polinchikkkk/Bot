@@ -5,38 +5,60 @@ from aiogram.types import Message
 
 import asyncio
 import logging
-import re
 import time
 import os
+import linecache
+import file_check
 
-bot = Bot(token = '7282726810:AAHjJXz0-B1qmKVkN-WiPiIZEr3_J643bn0')
+bot = Bot(token = '7320431304:AAFJbGLzwDlGIw6hxag_lOSv3HgJJ_2gL4U')
 dp = Dispatcher()
 
 
 @dp.message(CommandStart())
 async def start(message: Message):
-
+ 
+    id = message.chat.id
+    
     while True:
         await message.answer('Start verification')
-    
-        list_of_files = os.listdir('./logs')
+
+        list_of_files = [file for file in os.listdir('./logs')]
         list_of_files.reverse()
-    
-        await message.answer(f'Open file: ' + list_of_files[0])
-        path = os.path.join('logs', list_of_files[0])
+
+        last_open_file = 'fpogjdk'
+        
+
+        if last_open_file != list_of_files[0]:
+            last_open_file = list_of_files[0]
+            line_for_check = 0 
+
+        await message.answer(f'Open file: {last_open_file}')
+
+        path = os.path.join('logs', last_open_file)
 
         file = open(path, 'r')
+
         while True:
-          line = file.readline()
-          match = re.search(r'WARNING', line)
-          if match:
-              await message.answer(f'Error is found:')
-              await message.answer(line.strip())
-              time.sleep(60) 
-          if not line:
-            file.close()
-          
             
+            line = file.readline()
+
+            if not line:
+                file.close()
+                time.sleep(60)
+                break
+
+            line = linecache.getline(path, line_for_check)
+
+            line_for_check = await file_check.WARNING(path, line_for_check, line, id)
+
+            line_for_check = await file_check.ERROR(path, line_for_check, line, id)
+            
+            line_for_check = await file_check.FATAL(line, id)
+
+            line_for_check += 1
+
+
+
     
 async def main():
     await dp.start_polling(bot)
@@ -48,3 +70,4 @@ if __name__ == '__main__':
         asyncio.run(main())
     except KeyboardInterrupt:
         print('Exit')
+
