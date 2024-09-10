@@ -1,28 +1,38 @@
 import re
 import linecache
 from aiogram import Bot
+import asyncio
 
 
 bot = Bot(token = '7320431304:AAFJbGLzwDlGIw6hxag_lOSv3HgJJ_2gL4U')
+
+async def empty(id, full_message):
+    if full_message: 
+        await send_message(id, full_message)
+        await asyncio.sleep(5)
 
 
 async def send_message(id: int, text: str):
     await bot.send_message(id, text)
 
 
-async def WARNING(path, line_for_check, line, id):
+def WARNING(path, line_for_check, line):
     match1 = re.search(r'WARNING', line)
+    full_message = ''
     if match1:
         line_for_check += 2
         line = linecache.getline(path, line_for_check)
-        await send_message(id, line.strip())
+        full_message = line
+        # await send_message(id, line.strip())
+        # await asyncio.sleep(10)
         line_for_check += 1
-    return line_for_check    
+    return (line_for_check, full_message)    
     
 
-async def ERROR(path, line_for_check, line, id):
+def ERROR(path, line_for_check, line):
     match2 = re.search(r'ERROR', line)
-    FullContext = ''        
+    FullContext = ''
+    full_message = ''        
     if match2:
         while True:
             line_for_check += 1
@@ -39,17 +49,41 @@ async def ERROR(path, line_for_check, line, id):
                     else:
                         FullContext = FullContext + Part_of_Context.strip()
                 break 
-        await send_message(id, line.strip() + '\n' + Context.strip() + '\n' + FullContext.strip())
-    return line_for_check    
+        full_message = line.strip() + '\n' + Context.strip() + '\n' + FullContext.strip()
+        # await send_message(id, line.strip() + '\n' + Context.strip() + '\n' + FullContext.strip())
+        # await asyncio.sleep(10)
+    return (line_for_check, full_message)    
        
                         
 
-async def FATAL(line, id):
-    match3 = re.search(r'FATAL', line)                                  
+def FATAL(line, line_for_check):
+    match3 = re.search(r'FATAL', line) 
+    full_message = ''                                 
     if match3:
-        await send_message(id, line.strip())    
+        full_message = line.strip()
+        # await send_message(id, line.strip()) 
+        # await asyncio.sleep(10)
+    return (line_for_check, full_message)      
 
     
-        
+async def err(path, line, line_for_check, id, full_message):
+
+    line_for_check, full_message = WARNING(path, line_for_check, line)
+    if full_message: 
+        await send_message(id, full_message)
+        await asyncio.sleep(5)
+    else:
+        line_for_check, full_message = ERROR(path, line_for_check, line)
+        if full_message: 
+            await send_message(id, full_message)
+            await asyncio.sleep(5)
+        else:
+            line_for_check, full_message = FATAL(line, line_for_check)
+            if full_message: 
+                await send_message(id, full_message)
+                await asyncio.sleep(5)
+    return line_for_check
+
+
 
         
