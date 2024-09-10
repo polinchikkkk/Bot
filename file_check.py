@@ -1,19 +1,5 @@
 import re
 import linecache
-from aiogram import Bot
-import asyncio
-
-
-bot = Bot(token = '7320431304:AAFJbGLzwDlGIw6hxag_lOSv3HgJJ_2gL4U')
-
-async def empty(id, full_message):
-    if full_message: 
-        await send_message(id, full_message)
-        await asyncio.sleep(5)
-
-
-async def send_message(id: int, text: str):
-    await bot.send_message(id, text)
 
 
 def WARNING(path, line_for_check, line):
@@ -26,7 +12,7 @@ def WARNING(path, line_for_check, line):
         # await send_message(id, line.strip())
         # await asyncio.sleep(10)
         line_for_check += 1
-    return (line_for_check, full_message)    
+    return line_for_check, full_message   
     
 
 def ERROR(path, line_for_check, line):
@@ -52,7 +38,7 @@ def ERROR(path, line_for_check, line):
         full_message = line.strip() + '\n' + Context.strip() + '\n' + FullContext.strip()
         # await send_message(id, line.strip() + '\n' + Context.strip() + '\n' + FullContext.strip())
         # await asyncio.sleep(10)
-    return (line_for_check, full_message)    
+    return line_for_check, full_message    
        
                         
 
@@ -63,26 +49,19 @@ def FATAL(line, line_for_check):
         full_message = line.strip()
         # await send_message(id, line.strip()) 
         # await asyncio.sleep(10)
-    return (line_for_check, full_message)      
+    return line_for_check, full_message      
 
     
-async def err(path, line, line_for_check, id, full_message):
+def err(path, line, line_for_check, full_message):
 
     line_for_check, full_message = WARNING(path, line_for_check, line)
-    if full_message: 
-        await send_message(id, full_message)
-        await asyncio.sleep(5)
-    else:
-        line_for_check, full_message = ERROR(path, line_for_check, line)
-        if full_message: 
-            await send_message(id, full_message)
-            await asyncio.sleep(5)
-        else:
-            line_for_check, full_message = FATAL(line, line_for_check)
-            if full_message: 
-                await send_message(id, full_message)
-                await asyncio.sleep(5)
-    return line_for_check
+    
+    line_for_check, full_message = ERROR(path, line_for_check, line)
+   
+    line_for_check, full_message = FATAL(line, line_for_check)
+
+            
+    return line_for_check, full_message
 
 
 
