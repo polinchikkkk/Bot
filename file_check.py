@@ -2,7 +2,8 @@ import re
 import linecache
 
 
-def WARNING(path, line_for_check, line):
+def WARNING(path, line_for_check):
+    line = linecache.getline(path, line_for_check)
     match1 = re.search(r'WARNING', line)
     full_message = ''
     if match1:
@@ -15,7 +16,8 @@ def WARNING(path, line_for_check, line):
     return line_for_check, full_message   
     
 
-def ERROR(path, line_for_check, line):
+def ERROR(path, line_for_check):
+    line = linecache.getline(path, line_for_check)
     match2 = re.search(r'ERROR', line)
     FullContext = ''
     full_message = ''        
@@ -42,7 +44,8 @@ def ERROR(path, line_for_check, line):
        
                         
 
-def FATAL(line, line_for_check):
+def FATAL(path, line_for_check):
+    line = linecache.getline(path, line_for_check)
     match3 = re.search(r'FATAL', line) 
     full_message = ''                                 
     if match3:
@@ -52,17 +55,17 @@ def FATAL(line, line_for_check):
     return line_for_check, full_message      
 
     
-def err(path, line, line_for_check, full_message):
+def err(path, line_for_check, full_message):
 
-    line_for_check, full_message = WARNING(path, line_for_check, line)
+    line_for_check, full_message = WARNING(path, line_for_check)
 
     if full_message == '':
     
-        line_for_check, full_message = ERROR(path, line_for_check, line)
+        line_for_check, full_message = ERROR(path, line_for_check)
 
         if full_message == '':
 
-            line_for_check, full_message = FATAL(line, line_for_check)
+            line_for_check, full_message = FATAL(path, line_for_check)
 
     return line_for_check, full_message
 

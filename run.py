@@ -13,14 +13,13 @@ import file_check
 bot = Bot(token = '7320431304:AAFJbGLzwDlGIw6hxag_lOSv3HgJJ_2gL4U')
 dp = Dispatcher()
 
+async def send_message(id: int, text: str):
+        await bot.send_message(id, text)
 
 @dp.message(CommandStart())
 async def start(message: Message):
  
     id = message.chat.id
-
-    async def send_message(id: int, text: str):
-        await bot.send_message(id, text)
     
     while True:
         await message.answer('Start verification')
@@ -55,7 +54,7 @@ async def start(message: Message):
 
             line = linecache.getline(path, line_for_check)
 
-            line_for_check, full_message = file_check.err(path, line, line_for_check, full_message)
+            line_for_check, full_message = file_check.err(path, line_for_check, full_message)
 
             if full_message:
                 await send_message(id, full_message)
