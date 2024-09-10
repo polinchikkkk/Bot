@@ -55,12 +55,15 @@ def FATAL(line, line_for_check):
 def err(path, line, line_for_check, full_message):
 
     line_for_check, full_message = WARNING(path, line_for_check, line)
-    
-    line_for_check, full_message = ERROR(path, line_for_check, line)
-   
-    line_for_check, full_message = FATAL(line, line_for_check)
 
-            
+    if full_message == '':
+    
+        line_for_check, full_message = ERROR(path, line_for_check, line)
+
+        if full_message == '':
+
+            line_for_check, full_message = FATAL(line, line_for_check)
+
     return line_for_check, full_message
 
 
