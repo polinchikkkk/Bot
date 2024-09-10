@@ -33,7 +33,6 @@ async def start(message: Message):
         if last_open_file != list_of_files[0]:
             last_open_file = list_of_files[0]
             line_for_check = 0
-            full_message = ''
         
 
         await message.answer(f'Open file: {last_open_file}')
@@ -48,17 +47,18 @@ async def start(message: Message):
 
             if not line:
                 file.close()
-                # time.sleep(60)
+                # time.sleep(300)
                 break
 
 
             line = linecache.getline(path, line_for_check)
 
-            line_for_check, full_message = file_check.err(path, line_for_check, full_message)
+
+            line_for_check, full_message = file_check.err(path, line_for_check)
 
             if full_message:
                 await send_message(id, full_message)
-                await asyncio.sleep(5)
+                await asyncio.sleep(5)  
 
 
             line_for_check += 1
