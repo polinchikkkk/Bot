@@ -132,7 +132,7 @@ def warning(path: str, line_for_check: int) -> tuple[int, str]:
 
 
 def fatal(path: str, line_for_check: int) -> tuple[int, str]:
-    err_message = ''
+    full_message = ''
     line = linecache.getline(path, line_for_check)
 
     if not re.findall(r'[A-Z]*:  ', line):
@@ -142,48 +142,46 @@ def fatal(path: str, line_for_check: int) -> tuple[int, str]:
     flag, text = flag_and_text(line=line)
     
     if flag=='FATAL':
-        err_message = text
+        full_message = text
         line_for_check += 1 
        
-        return line_for_check, err_message
+        return line_for_check, full_message
     else:
         return line_for_check+1, ''
 
 
 set_errors = set()
-set_warnings = set()
-set_fatals = set()
 
-def err(path, line_for_check):
+def err(path_, line_for_check_):
      
-    line_for_check, full_message = error(path, line_for_check)
+    line_for_check, full_message = error(path = path_, line_for_check = line_for_check_)
 
     
-    if full_message not in set_errors:
-        set_errors.add(full_message)
-    else:
+    if full_message in set_errors:
         full_message = ''
+    else:
+        set_errors.add(full_message)
+
     
     if not full_message:
-        line_for_check, full_message = warning(path, line_for_check)
+        line_for_check, full_message = warning(path = path_, line_for_check = line_for_check_)
 
 
-        if full_message not in set_warnings:
-            set_warnings.add(full_message)
-        else:
+        if full_message in set_errors:
             full_message = ''
+        else:
+            set_errors.add(full_message)
+
         
 
         if not full_message:
-            line_for_check, full_message = fatal(path, line_for_check)
+            line_for_check, full_message = fatal(path = path_, line_for_check = line_for_check_)
  
 
-            if full_message not in set_fatals:
-                set_fatals.add(full_message)
-            else:
+            if full_message in set_errors:
                 full_message = ''
-
-    
+            else:
+                set_errors.add(full_message)
 
     return line_for_check, full_message    
 

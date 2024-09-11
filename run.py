@@ -58,7 +58,7 @@ async def start(message: Message):
 
             if full_message:
                 await send_message(id, full_message)
-                await asyncio.sleep(5)  
+                # await asyncio.sleep(2)  
 
 
             line_for_check += 1
