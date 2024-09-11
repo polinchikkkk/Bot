@@ -47,7 +47,7 @@ async def start(message: Message):
 
             if not line:
                 file.close()
-                # time.sleep(300)
+                time.sleep(300)
                 break
 
 
@@ -58,10 +58,10 @@ async def start(message: Message):
 
             if full_message:
                 await send_message(id, full_message)
-                # await asyncio.sleep(2)  
+                await asyncio.sleep(1)  
 
+            line_for_check += 1    
 
-            line_for_check += 1
 
 
 
