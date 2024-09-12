@@ -24,20 +24,28 @@ async def start(message: Message):
     while True:
         await message.answer('Start verification')
 
-        list_of_files = [file for file in os.listdir('./logs')]
-        list_of_files.reverse()
+        list_of_files = (os.listdir('./logs'))
+
+        n = 0
+        for n in range(len(list_of_files)):
+            list_of_files[n] = os.path.join('logs', list_of_files[n])
+            n += 1
+
+        list_of_files.sort(key=lambda x: os.path.getmtime(x), reverse = True)
 
         last_open_file = 'fpogjdk'
-        
 
-        if last_open_file != list_of_files[0]:
-            last_open_file = list_of_files[0]
-            line_for_check = 0
+        if len(list_of_files) > 0:
+            if last_open_file != list_of_files[0]:
+                last_open_file = list_of_files[0]
+                line_for_check = 0
+        else:
+            break        
         
 
         await message.answer(f'Open file: {last_open_file}')
 
-        path = os.path.join('logs', last_open_file)
+        path = last_open_file
 
         file = open(path, 'r')
 
