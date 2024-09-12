@@ -35,12 +35,12 @@ async def start(message: Message):
 
         last_open_file = 'fpogjdk'
 
-        if len(list_of_files) > 0:
+        if len(list_of_files) < 0:
+            break
+        else:
             if last_open_file != list_of_files[0]:
                 last_open_file = list_of_files[0]
-                line_for_check = 0
-        else:
-            break        
+                line_for_check = 0        
         
 
         await message.answer(f'Open file: {last_open_file}')
