@@ -71,25 +71,6 @@ def warning(path: str, line_for_check: int) -> tuple[int, str]:
         return line_for_check, ''
 
 
-
-def fatal(path: str, line_for_check: int) -> tuple[int, str]:
-    full_message = ''
-    line = linecache.getline(path, line_for_check)
-
-    if not re.findall(r'[A-Z]*:  ', line):
-         return line_for_check, ''
-
-    flag, text = flag_and_text(line=line)
-    
-    if flag=='FATAL':
-        full_message = text
-        line_for_check += 1 
-       
-        return line_for_check, full_message
-    else:
-        return line_for_check, ''
-
-
 set_errors = set()
 
 def err(path, line_for_check):
@@ -98,9 +79,6 @@ def err(path, line_for_check):
 
     if not full_message:
         line_for_check, full_message = warning(path, line_for_check)
-
-        if not full_message:
-            line_for_check, full_message = fatal(path, line_for_check)
 
     if full_message in set_errors:
         full_message = ''
