@@ -36,6 +36,8 @@ async def start(message: Message):
     # добавляем новый айди
     if not str(message.chat.id) in joinedUsers:
         joinedUsers.add(message.chat.id)
+        for err in set_errors:
+            await send_message(err)
 
     global single_loop
     if not single_loop:
