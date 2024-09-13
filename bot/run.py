@@ -35,9 +35,8 @@ async def start(message: Message):
 
     # добавляем новый айди
     if not str(message.chat.id) in joinedUsers:
-        # joinedFile = open('bot/users.txt', 'a')
-        # joinedFile.write(str(message.chat.id) + '\n')
         joinedUsers.add(message.chat.id)
+
     global single_loop
     if not single_loop:
         single_loop = True
@@ -101,10 +100,8 @@ if __name__ == '__main__':
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        joinedFile = open('bot/users.txt', 'a')
-        for line in joinedUsers:
-           joinedFile.write(str(line))
-           joinedFile.write('\n')
-        joinedFile.close()
+        with open('bot/users.txt', 'w') as file: 
+            for id in joinedUsers:
+                file.write(str(id) + '\n')
         print('Exit')
 
