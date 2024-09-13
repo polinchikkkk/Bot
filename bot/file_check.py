@@ -15,7 +15,7 @@ def error(path: str, line_for_check: int) -> str:
     line = linecache.getline(path, line_for_check)
 
     if not re.findall(r'[A-Z]*:  ', line):
-         return line_for_check, ''
+         return ''
 
     flag, text = flag_and_text(line=line)
     
@@ -53,7 +53,7 @@ def warning(path: str, line_for_check: int) -> str:
     line = linecache.getline(path, line_for_check)
 
     if not re.findall(r'[A-Z]*:  ', line):
-         return line_for_check, ''
+         return ''
 
     flag, text = flag_and_text(line=line)
     
