@@ -24,8 +24,8 @@ joinedFile.close()
 
 # рассылка сообщений всем пользователям по айди из документа
 async def send_message(text: str):
-        for user in joinedUsers:
-            await bot.send_message(chat_id = user, text = text)
+    for user in joinedUsers:
+        await bot.send_message(chat_id = user, text = text)
 
 single_loop = False            
 
