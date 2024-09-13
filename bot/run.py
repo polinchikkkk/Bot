@@ -36,9 +36,8 @@ session = Session(set_errors = set(), last_open_file = '', line_for_check = 0)
 @dp.message(CommandStart())
 async def start(message: Message):
 
-
     # добавляем новый айди
-    if not str(message.chat.id) in joinedUsers:
+    if not int(message.chat.id) in joinedUsers:
         joinedUsers.add(message.chat.id)
         for err in session.set_errors:
             await send_message(err)
@@ -65,14 +64,10 @@ async def start(message: Message):
                 break
             else:
                 session.new_file(file_for_check)
-                
-
 
             await message.answer(f'Open file: {file_for_check}')
 
-            path = file_for_check
-
-            file = open(path, 'r')
+            file = open(session.last_open_file, 'r')
 
             while True:
                 line = file.readline()
@@ -83,10 +78,10 @@ async def start(message: Message):
                     break
 
 
-                line = linecache.getline(path, session.line_for_check)
+                line = linecache.getline(session.last_open_file, session.line_for_check)
 
 
-                session.line_for_check, full_message, session.set_errors = file_check.err(path, session.line_for_check, session.set_errors)
+                full_message = file_check.err(session)
 
                 if full_message:
                     await send_message(full_message)

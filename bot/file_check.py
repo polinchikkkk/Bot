@@ -1,5 +1,6 @@
 import re
 import linecache
+from session_data import Session
 
 
 def flag_and_text(line) -> tuple[str, str]:
@@ -8,7 +9,7 @@ def flag_and_text(line) -> tuple[str, str]:
                     
 
 
-def error(path: str, line_for_check: int) -> tuple[int, str]:
+def error(path: str, line_for_check: int) -> str:
     err_message = ''
     context_message = ''
     line = linecache.getline(path, line_for_check)
@@ -40,13 +41,13 @@ def error(path: str, line_for_check: int) -> tuple[int, str]:
 
         full_message = err_message + "\n" + context_message
 
-        return line_for_check, full_message
+        return full_message
     else:
-        return line_for_check, ''
+        return ''
     
 
 
-def warning(path: str, line_for_check: int) -> tuple[int, str]:
+def warning(path: str, line_for_check: int) -> str:
     err_message = ''
     context_message = ''
     line = linecache.getline(path, line_for_check)
@@ -66,26 +67,25 @@ def warning(path: str, line_for_check: int) -> tuple[int, str]:
 
         full_message = err_message + "\n" + context_message
 
-        return line_for_check, full_message
+        return full_message
     else:
-        return line_for_check, ''
+        return ''
 
 
-# set_errors = set()
 
-def err(path, line_for_check, set_errors):
+def err(session: Session) -> str:
      
-    line_for_check, full_message = error(path, line_for_check)
+    full_message = error(session.last_open_file, session.line_for_check)
 
     if not full_message:
-        line_for_check, full_message = warning(path, line_for_check)
+        full_message = warning(session.last_open_file, session.line_for_check)
 
-    if full_message in set_errors:
+    if full_message in session.set_errors:
         full_message = ''
     else:
-        set_errors.add(full_message)
+        session.set_errors.add(full_message)
     
-    return line_for_check, full_message, set_errors    
+    return full_message    
 
 
 
