@@ -71,9 +71,9 @@ def warning(path: str, line_for_check: int) -> tuple[int, str]:
         return line_for_check, ''
 
 
-set_errors = set()
+# set_errors = set()
 
-def err(path, line_for_check):
+def err(path, line_for_check, set_errors):
      
     line_for_check, full_message = error(path, line_for_check)
 
@@ -85,7 +85,7 @@ def err(path, line_for_check):
     else:
         set_errors.add(full_message)
     
-    return line_for_check, full_message    
+    return line_for_check, full_message, set_errors    
 
 
 
