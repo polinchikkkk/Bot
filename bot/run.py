@@ -13,13 +13,30 @@ import file_check
 bot = Bot(token = '7320431304:AAFJbGLzwDlGIw6hxag_lOSv3HgJJ_2gL4U')
 dp = Dispatcher()
 
-async def send_message(id: int, text: str):
-        await bot.send_message(id, text)
+# запись файла с айди подключенных пользователей 
+joinedFile = open('bot/users.txt', 'r')
+joinedUsers = set ()
+for line in joinedFile:
+    joinedUsers.add(line.strip())
+joinedFile.close()
+
+
+# рассылка сообщений всем пользователям по айди из документа
+async def send_message(text: str):
+        for user in joinedUsers:
+            await bot.send_message(chat_id = user, text = text)
 
 @dp.message(CommandStart())
 async def start(message: Message):
  
-    id = message.chat.id
+    # id = message.chat.id
+
+    # добавляем новый айди
+    if not str(message.chat.id) in joinedUsers:
+        joinedFile = open('bot/users.txt', 'a')
+        joinedFile.write(str(message.chat.id) + '\n')
+        joinedUsers.add(message.chat.id)
+
     
     while True:
         await message.answer('Start verification')
@@ -36,11 +53,13 @@ async def start(message: Message):
         last_open_file = 'fpogjdk'
 
         if len(list_of_files) < 0:
+            await message.answer('File with logs not found')
             break
         else:
             if last_open_file != list_of_files[0]:
                 last_open_file = list_of_files[0]
-                line_for_check = 0        
+                line_for_check = 0
+                set_errors = set() # решила для каждого нового файла обновлять сет
         
 
         await message.answer(f'Open file: {last_open_file}')
@@ -62,16 +81,13 @@ async def start(message: Message):
             line = linecache.getline(path, line_for_check)
 
 
-            line_for_check, full_message = file_check.err(path, line_for_check)
+            line_for_check, full_message, set_errors = file_check.err(path, line_for_check, set_errors)
 
             if full_message:
-                await send_message(id, full_message)
+                await send_message(full_message)
                 await asyncio.sleep(1)  
 
             line_for_check += 1    
-
-
-
 
     
 async def main():
