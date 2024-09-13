@@ -4,6 +4,6 @@ COPY requirements.txt /code/requirements.txt
  
 RUN pip install --no-cache-dir -r /code/requirements.txt 
  
-COPY . /code/ 
+COPY . /bot/ 
  
-CMD ["python", "/code/run.py"]
+CMD ["python", "/bot/run.py"]
