@@ -4,7 +4,8 @@ services:
    build: bot/
    #image: polinchik/bot:latest
    volumes:
-     - ./logs:/logs   
+    - /var/log/postgresql/:/logs
+   
    
 
   
