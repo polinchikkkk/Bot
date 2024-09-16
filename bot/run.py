@@ -64,8 +64,8 @@ async def start(message: Message):
                 await message.answer('File with logs not found')
                 break
 
+            linecache.checkcache(session.last_open_file)
             while True:
-                linecache.checkcache(session.last_open_file)
                 line = linecache.getline(session.last_open_file, session.line_for_check)
 
                 if not line:
