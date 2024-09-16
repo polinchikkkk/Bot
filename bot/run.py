@@ -40,7 +40,10 @@ async def start(message: Message):
     if not int(message.chat.id) in joinedUsers:
         joinedUsers.add(message.chat.id)
         for err in session.set_errors:
-            await send_message(err)
+            if not err: # проверка на пустое сообщение
+                session.set_errors.remove(err)
+            else:
+                await send_message(err)
 
     global single_loop
     if not single_loop:
