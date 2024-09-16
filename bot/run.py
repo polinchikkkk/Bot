@@ -65,6 +65,7 @@ async def start(message: Message):
                 break
 
             while True:
+                linecache.checkcache(session.last_open_file)
                 line = linecache.getline(session.last_open_file, session.line_for_check)
 
                 if not line:
