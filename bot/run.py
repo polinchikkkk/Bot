@@ -1,14 +1,13 @@
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
-
+from session_data import Session
 
 import asyncio
 import logging
 import os
 import linecache
 import file_check
-from session_data import Session
 
 bot = Bot(token = '7320431304:AAFJbGLzwDlGIw6hxag_lOSv3HgJJ_2gL4U')
 dp = Dispatcher()
@@ -21,29 +20,27 @@ for line in joinedFile:
         joinedUsers.add(int(line.strip()))
 joinedFile.close()
 
-
 # рассылка сообщений всем пользователям по айди из документа
 async def send_message(text: str):
     for user in joinedUsers:
         await bot.send_message(chat_id = user, text = text)
 
-# добавила команду для проверки, что бот работает
 @dp.message(Command('healtcheck'))
 async def healtcheck(message: Message):
     await message.answer('Bot is working')
 
 single_loop = False    
 
-session = Session(set_errors = set(), last_open_file = '', line_for_check = 0)
+session = Session(set_errors = set(), last_open_file = '', line_for_check = 1)
 
-@dp.message(CommandStart())  #убрала вывод сообщений (start verification, open file)
+@dp.message(CommandStart()) 
 async def start(message: Message):
 
     # добавляем новый айди
     if not int(message.chat.id) in joinedUsers:
         joinedUsers.add(message.chat.id)
         for err in session.set_errors:
-            if not err: # проверка на пустое сообщение
+            if not err:
                 session.set_errors.remove(err)
             else:
                 await send_message(err)
@@ -61,16 +58,13 @@ async def start(message: Message):
 
             list_of_files.sort(key=lambda x: os.path.getmtime(x), reverse = True)
 
-            file_for_check = list_of_files[0]
-
-            if len(list_of_files) < 0:
+            if list_of_files:
+                session.new_file(list_of_files[0])
+            else:
                 await message.answer('File with logs not found')
                 break
-            else:
-                session.new_file(file_for_check)
 
-
-            while True: #поправила этот цикл
+            while True:
                 line = linecache.getline(session.last_open_file, session.line_for_check)
 
                 if not line:
@@ -84,8 +78,6 @@ async def start(message: Message):
                     await asyncio.sleep(1)  
 
                 session.line_for_check += 1    
-
-
     
 async def main():
     await dp.start_polling(bot)
