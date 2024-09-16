@@ -5,7 +5,6 @@ from aiogram.types import Message
 
 import asyncio
 import logging
-import time
 import os
 import linecache
 import file_check
@@ -28,16 +27,16 @@ async def send_message(text: str):
     for user in joinedUsers:
         await bot.send_message(chat_id = user, text = text)
 
+# добавила команду для проверки, что бот работает
 @dp.message(Command('healtcheck'))
 async def healtcheck(message: Message):
     await message.answer('Bot is working')
 
-single_loop = False     
-
+single_loop = False    
 
 session = Session(set_errors = set(), last_open_file = '', line_for_check = 0)
 
-@dp.message(CommandStart())
+@dp.message(CommandStart())  #убрала вывод сообщений (start verification, open file)
 async def start(message: Message):
 
     # добавляем новый айди
@@ -70,7 +69,8 @@ async def start(message: Message):
             else:
                 session.new_file(file_for_check)
 
-            while True:
+
+            while True: #поправила этот цикл
                 line = linecache.getline(session.last_open_file, session.line_for_check)
 
                 if not line:
