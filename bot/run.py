@@ -1,5 +1,5 @@
 from aiogram import Bot, Dispatcher
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 
 
@@ -28,6 +28,10 @@ async def send_message(text: str):
     for user in joinedUsers:
         await bot.send_message(chat_id = user, text = text)
 
+@dp.message(Command('healtcheck'))
+async def healtcheck(message: Message):
+    await message.answer('Bot is working')
+
 single_loop = False     
 
 
@@ -49,8 +53,6 @@ async def start(message: Message):
     if not single_loop:
         single_loop = True
         while True:
-            await message.answer('Start verification')
-
             list_of_files = (os.listdir('./logs'))
 
             n = 0
@@ -68,22 +70,13 @@ async def start(message: Message):
             else:
                 session.new_file(file_for_check)
 
-            await message.answer(f'Open file: {file_for_check}')
-
-            file = open(session.last_open_file, 'r')
-
             while True:
-                line = file.readline()
-
-                if not line:
-                    file.close()
-                    time.sleep(300)
-                    break
-
-
                 line = linecache.getline(session.last_open_file, session.line_for_check)
 
-
+                if not line:
+                    await asyncio.sleep(300)
+                    break
+                
                 full_message = file_check.err(session)
 
                 if full_message:
@@ -91,6 +84,7 @@ async def start(message: Message):
                     await asyncio.sleep(1)  
 
                 session.line_for_check += 1    
+
 
     
 async def main():

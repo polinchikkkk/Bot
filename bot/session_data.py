@@ -7,5 +7,5 @@ class Session:
     def new_file(self, file_for_check: str):
         if self.last_open_file != file_for_check:
             self.last_open_file = file_for_check
-            self.line_for_check = 0
+            self.line_for_check = 1
             self.set_errors.clear()
