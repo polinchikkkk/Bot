@@ -63,13 +63,16 @@ async def start(message: Message):
             else:
                 await message.answer('File with logs not found')
                 break
+            await message.answer(session.last_open_file)
+            await message.answer(str(session.line_for_check))
 
             linecache.checkcache(session.last_open_file)
             while True:
                 line = linecache.getline(session.last_open_file, session.line_for_check)
 
                 if not line:
-                    await asyncio.sleep(300)
+                    await message.answer('File close')
+                    await asyncio.sleep(30)
                     break
                 
                 full_message = file_check.err(session)
