@@ -42,46 +42,18 @@ def error(session: Session) -> str:
         return full_message
     else:
         return ''
-    
-
-
-def warning(session: Session) -> str:
-    err_message = ''
-    context_message = ''
-    line = linecache.getline(session.last_open_file, session.line_for_check)
-
-    if not re.findall(r'[A-Z]*:  ', line):
-         return ''
-    else:
-        flag, text = flag_and_text(line=line)
-    
-    if flag=='WARNING':
-        err_message = text
-        session.line_for_check += 2
-
-        flag, context_message = flag_and_text(line=linecache.getline(session.last_open_file, session.line_for_check))
-
-        full_message = err_message + "\n" + context_message
-
-        return full_message
-    else:
-        return ''
-
 
 
 def err(session: Session) -> str:
      
     full_message = error(session)
 
-    if not full_message:
-        full_message = warning(session)
-
     if full_message in session.set_errors:
         full_message = ''
-    else:
-        session.set_errors.add(full_message)
     
-    return full_message   
+    if full_message:
+        session.set_errors.add(full_message)
+        return full_message   
 
 
 
