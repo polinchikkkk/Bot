@@ -38,7 +38,7 @@ session = Session(set_errors = set(), last_open_file = '', line_for_check = 1)
 async def start(message: Message):
 
     #рассылка ошибок из сета новым позьвателям и проверка на пустой элемент в сете
-    if not int(message.chat.id) in joinedUsers:
+    if not message.chat.id in joinedUsers:
         joinedUsers.add(message.chat.id)
         for err in session.set_errors:
             if not err:
