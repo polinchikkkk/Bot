@@ -9,7 +9,7 @@ import os
 import linecache
 import file_check
 
-bot = Bot(token = '7320431304:AAFJbGLzwDlGIw6hxag_lOSv3HgJJ_2gL4U')
+bot = Bot(token = '7505568591:AAGikkxptz-lR2PUIvdvPyHNXYXc7KTSrOs')
 dp = Dispatcher()
 
 #добавляю из файла айди в сет 
@@ -68,10 +68,6 @@ async def start(message: Message):
                 await message.answer('File with logs not found') 
                 break
 
-
-            await message.answer('new file:' + session.last_open_file)
-            await message.answer('line for check = ' + str(session.line_for_check))
-
             #обновление файла для проверки
             linecache.checkcache(session.last_open_file)
 
@@ -81,8 +77,7 @@ async def start(message: Message):
 
                 #если полученная строка пустая, засыпаем и выходим из цикла, ищем снова последний измененный файл
                 if not line:
-                    await message.answer('file close')
-                    await asyncio.sleep(30)
+                    await asyncio.sleep(300)
                     break
                 
                 full_message = file_check.err(session) #получаем сообщение об ошибке 
