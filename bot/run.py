@@ -12,6 +12,11 @@ import file_check
 bot = Bot(token = '7505568591:AAGikkxptz-lR2PUIvdvPyHNXYXc7KTSrOs')
 dp = Dispatcher()
 
+#создаем сессию
+session = Session()
+
+single_loop = False   
+
 #добавляю из файла айди в сет 
 joinedUsers = set ()
 with open('bot/users.txt', 'r') as file:
@@ -19,20 +24,18 @@ with open('bot/users.txt', 'r') as file:
         if line.strip().isnumeric():
             joinedUsers.add(int(line.strip()))
 
+
 #функция рассылки сообщений пользователям по айди из сета
 async def send_message(text: str):
     for user in joinedUsers:
         await bot.send_message(chat_id = user, text = text)
+
 
 #функция для вывода сообщения о том, что бот работает, пишет только пользователю, который написал healtcheck
 @dp.message(Command('healtcheck'))
 async def healtcheck(message: Message):
     await message.answer('Bot is working')
 
-single_loop = False    
-
-#создаем сессию
-session = Session(set_errors = set(), last_open_file = '', line_for_check = 1)
 
 @dp.message(CommandStart()) 
 async def start(message: Message):
@@ -70,6 +73,10 @@ async def start(message: Message):
 
             #обновление файла для проверки
             linecache.checkcache(session.last_open_file)
+            
+            if session.debug:
+                print(f"list of files: {list_of_files}")
+                print(f"session.last_open_file: {session.last_open_file}")
 
             #цикл нахождений ошибок и вывода сообщений об этом
             while True:
@@ -77,6 +84,7 @@ async def start(message: Message):
 
                 #если полученная строка пустая, засыпаем и выходим из цикла, ищем снова последний измененный файл
                 if not line:
+                    print(f"session.line_for_check: {session.line_for_check}")
                     await asyncio.sleep(300)
                     break
                 

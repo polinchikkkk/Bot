@@ -1,6 +1,7 @@
 class Session:
     #констурктор сессии
-    def __init__(self, set_errors: set, last_open_file: str, line_for_check: int):
+    def __init__(self, set_errors: set = set(), last_open_file: str = '', line_for_check: int = 1, debug = False):
+        self.debug = debug
         self.last_open_file = last_open_file
         self.set_errors = set_errors
         self.line_for_check = line_for_check
