@@ -3,9 +3,9 @@ import linecache
 from session_data import Session
 
 #функция нахождения флага и текста ошибки
-def flag_and_text(line) -> tuple[str, str]:
-        search = re.search(r'([A-Z]*):  (.*)', line)
-        return search.group(1), search.group(2)
+def id_flag_text(line) -> tuple[str, str]:
+        search = re.search(r'\[(\d*)\].*(A-Z)*:  (.*)', line)
+        return search.group(1), search.group(2), search.group(3)
                     
 #функция нахождения ошибок
 def error(session: Session) -> str:
@@ -17,17 +17,22 @@ def error(session: Session) -> str:
     if not re.findall(r'[A-Z]*:  ', line):
          return ''
 
-    flag, text = flag_and_text(line=line) #получаем флаг и текст ошибки
+    id, flag, text = id_flag_text(line=line) #получаем флаг и текст ошибки
     
     #проверка найденного флага
     if flag=='ERROR':
+        err_id = id
         err_message = text
         session.line_for_check += 1
+        id, flag, text = id_flag_text(line=linecache.getline(session.last_open_file, session.line_for_check))
+        #проверка на наличие контекста по айди
+        if id != err_id:
+            return err_message
         
         #цикл нахождения контекста 
         while True:
             if re.findall(r'[A-Z]*:  ', linecache.getline(session.last_open_file, session.line_for_check)):
-                flag, text = flag_and_text(line=linecache.getline(session.last_open_file, session.line_for_check))
+                id, flag, text = id_flag_text(line=linecache.getline(session.last_open_file, session.line_for_check))
 
                 #если нашли флаг контекста, сохранияем текст контекста
                 if flag == 'CONTEXT':
