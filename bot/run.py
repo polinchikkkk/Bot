@@ -85,7 +85,7 @@ async def start(message: Message):
                 #если полученная строка пустая, засыпаем и выходим из цикла, ищем снова последний измененный файл
                 if not line:
                     print(f"session.line_for_check: {session.line_for_check}")
-                    await asyncio.sleep(300)
+                    await asyncio.sleep(30)
                     break
                 
                 full_message = file_check.err(session) #получаем сообщение об ошибке 
@@ -95,7 +95,7 @@ async def start(message: Message):
                     await send_message(full_message)
                     await asyncio.sleep(1)  
 
-                session.line_for_check += 1 #итерация строк файла   
+                # session.line_for_check += 1 #итерация строк файла   
     
 async def main():
     await dp.start_polling(bot)
