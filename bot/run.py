@@ -85,7 +85,7 @@ async def start(message: Message):
                 #если полученная строка пустая, засыпаем и выходим из цикла, ищем снова последний измененный файл
                 if not line:
                     print(f"session.line_for_check: {session.line_for_check}")
-                    await asyncio.sleep(30)
+                    await asyncio.sleep(300)
                     break
                 
                 full_message = file_check.err(session) #получаем сообщение об ошибке 
