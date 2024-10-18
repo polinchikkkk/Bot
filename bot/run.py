@@ -31,28 +31,32 @@ async def send_message(text: str):
         await bot.send_message(chat_id = user, text = text)
 
 
-#функция нахождения ошибок и вывода сообщений об этом
-async def new_file_check():
-     while True:
+#функция для одноразовой проверки файла
+@dp.message(Command('scan'))
+async def scan(message: Message):
+    try:
+        while True:
             line = linecache.getline(session.last_open_file, session.line_for_check) #получаем строку файла
 
-            #если полученная строка пустая, засыпаем и выходим из цикла, ищем снова последний измененный файл
+            #если полученная строка пустая, выходим из цикла
             if not line:
                 print(f"session.line_for_check: {session.line_for_check}")
                 break
                 
             full_message = file_check.err(session) #получаем сообщение об ошибке 
 
-                #проверка сообщения об ошибке
+            #проверка сообщения об ошибке
             if full_message:
                 await send_message(full_message)
                 await asyncio.sleep(1) 
+    except:
+        print(f"Ошибка проверки файла!")
 
 
 
 #функция для вывода сообщения о том, что бот работает, пишет только пользователю, который написал healtcheck
-@dp.message(Command('healtcheck'))
-async def healtcheck(message: Message):
+@dp.message(Command('healthcheck'))
+async def healthcheck(message: Message):
     await message.answer('Bot is working')
 
 
@@ -97,29 +101,23 @@ async def start(message: Message):
                 print(f"list of files: {list_of_files}")
                 print(f"session.last_open_file: {session.last_open_file}")
             
-            # #цикл нахождений ошибок и вывода сообщений об этом
-            # while True:
-            #     line = linecache.getline(session.last_open_file, session.line_for_check) #получаем строку файла
+            #цикл нахождений ошибок и вывода сообщений об этом
+            while True:
+                line = linecache.getline(session.last_open_file, session.line_for_check) #получаем строку файла
 
-            #     #если полученная строка пустая, засыпаем и выходим из цикла, ищем снова последний измененный файл
-            #     if not line:
-            #         print(f"session.line_for_check: {session.line_for_check}")
-            #         await asyncio.sleep(300)
-            #         break
+                #если полученная строка пустая, засыпаем и выходим из цикла, ищем снова последний измененный файл
+                if not line:
+                    print(f"session.line_for_check: {session.line_for_check}")
+                    await asyncio.sleep(300)
+                    break
                 
-            #     full_message = file_check.err(session) #получаем сообщение об ошибке 
+                full_message = file_check.err(session) #получаем сообщение об ошибке 
 
-            #     #проверка сообщения об ошибке
-            #     if full_message:
-            #         await send_message(full_message)
-            #         await asyncio.sleep(1) 
+                #проверка сообщения об ошибке
+                if full_message:
+                    await send_message(full_message)
+                    await asyncio.sleep(1) 
 
-            break 
-
-        try:
-            await new_file_check()
-        except:
-            print(f"Ошибка проверки файла!")
 
     
 async def main():
