@@ -9,7 +9,7 @@ import os
 import linecache
 import file_check
 
-bot = Bot(token = '7505568591:AAGikkxptz-lR2PUIvdvPyHNXYXc7KTSrOs')
+bot = Bot(token = '7320431304:AAFJbGLzwDlGIw6hxag_lOSv3HgJJ_2gL4U')
 dp = Dispatcher()
 
 #создаем сессию
@@ -31,6 +31,25 @@ async def send_message(text: str):
         await bot.send_message(chat_id = user, text = text)
 
 
+#функция нахождения ошибок и вывода сообщений об этом
+async def new_file_check():
+     while True:
+            line = linecache.getline(session.last_open_file, session.line_for_check) #получаем строку файла
+
+            #если полученная строка пустая, засыпаем и выходим из цикла, ищем снова последний измененный файл
+            if not line:
+                print(f"session.line_for_check: {session.line_for_check}")
+                break
+                
+            full_message = file_check.err(session) #получаем сообщение об ошибке 
+
+                #проверка сообщения об ошибке
+            if full_message:
+                await send_message(full_message)
+                await asyncio.sleep(1) 
+
+
+
 #функция для вывода сообщения о том, что бот работает, пишет только пользователю, который написал healtcheck
 @dp.message(Command('healtcheck'))
 async def healtcheck(message: Message):
@@ -49,14 +68,14 @@ async def start(message: Message):
             else:
                 await send_message(err)
 
-    #запуск цикл с нахождением файла, ошибок и тд, также проверка на единичный запуск цикла
+    #запуск цикла с нахождением файла, ошибок и тд, также проверка на единичный запуск цикла
     global single_loop
     if not single_loop:
         single_loop = True
 
         #цикл нахождения нужного файла с ошибками
         while True:
-            list_of_files = (os.listdir('./logs')) #получем неупорядоченный список названия файлов из папки logs
+            list_of_files = (os.listdir('./logs')) #получем неупорядоченный список названий файлов из папки logs
 
             #цикл получения путей файлов из их названий и занесение в список
             for n in range(len(list_of_files)):
@@ -73,29 +92,35 @@ async def start(message: Message):
 
             #обновление файла для проверки
             linecache.checkcache(session.last_open_file)
-            
+
             if session.debug:
                 print(f"list of files: {list_of_files}")
                 print(f"session.last_open_file: {session.last_open_file}")
+            
+            # #цикл нахождений ошибок и вывода сообщений об этом
+            # while True:
+            #     line = linecache.getline(session.last_open_file, session.line_for_check) #получаем строку файла
 
-            #цикл нахождений ошибок и вывода сообщений об этом
-            while True:
-                line = linecache.getline(session.last_open_file, session.line_for_check) #получаем строку файла
-
-                #если полученная строка пустая, засыпаем и выходим из цикла, ищем снова последний измененный файл
-                if not line:
-                    print(f"session.line_for_check: {session.line_for_check}")
-                    await asyncio.sleep(300)
-                    break
+            #     #если полученная строка пустая, засыпаем и выходим из цикла, ищем снова последний измененный файл
+            #     if not line:
+            #         print(f"session.line_for_check: {session.line_for_check}")
+            #         await asyncio.sleep(300)
+            #         break
                 
-                full_message = file_check.err(session) #получаем сообщение об ошибке 
+            #     full_message = file_check.err(session) #получаем сообщение об ошибке 
 
-                #проверка сообщения об ошибке
-                if full_message:
-                    await send_message(full_message)
-                    await asyncio.sleep(1)  
+            #     #проверка сообщения об ошибке
+            #     if full_message:
+            #         await send_message(full_message)
+            #         await asyncio.sleep(1) 
 
-                # session.line_for_check += 1 #итерация строк файла   
+            break 
+
+        try:
+            await new_file_check()
+        except:
+            print(f"Ошибка проверки файла!")
+
     
 async def main():
     await dp.start_polling(bot)
