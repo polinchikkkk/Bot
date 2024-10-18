@@ -9,7 +9,7 @@ import os
 import linecache
 import file_check
 
-bot = Bot(token = '7320431304:AAFJbGLzwDlGIw6hxag_lOSv3HgJJ_2gL4U')
+bot = Bot(token = '7505568591:AAGikkxptz-lR2PUIvdvPyHNXYXc7KTSrOs')
 dp = Dispatcher()
 
 #создаем сессию
