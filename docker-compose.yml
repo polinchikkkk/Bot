@@ -5,9 +5,9 @@ services:
    #image: polinchik/bot:latest
    volumes:
     - /var/log/postgresql/:/logs
+    - /tmp/my.fifo:/hostpipe
    
    
 
   
   
-   

@@ -8,6 +8,7 @@ import logging
 import os
 import linecache
 import file_check
+import subprocess
 
 bot = Bot(token = '7505568591:AAGikkxptz-lR2PUIvdvPyHNXYXc7KTSrOs')
 dp = Dispatcher()
@@ -47,10 +48,18 @@ async def scan(message: Message):
 
             #проверка сообщения об ошибке
             if full_message:
-                await send_message(full_message)
+                await message.answer(full_message)
                 await asyncio.sleep(1) 
     except:
         print(f"Ошибка проверки файла!")
+
+
+
+#функция для проверки статусов
+@dp.message(Command('status'))
+async def status(message: Message):
+    result = subprocess.run(["ls"], capture_output=True)
+    await message.answer(result.stdout)
 
 
 
