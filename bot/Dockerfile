@@ -1,6 +1,4 @@
 FROM python:3.12.5 
- 
-VOLUME /hostpipe 
 
 COPY requirements.txt /code/requirements.txt  
  
